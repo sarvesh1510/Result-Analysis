@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- HEADER -->
+    <div class="dashboard-header">
+        <h1>Performance Reports</h1>
+        <p>Detailed academic analytics and SGPA-based ranking dashboard</p>
+    </div>
+
+    <div class="premium-filter-card">
+    <form method="get" class="premium-filter-form">
+        <div class="filter-left">
+            <span class="filter-badge"> Analytics Scope</span>
+            <div class="filter-title-group">
+                <h3>Filter by Course</h3>
+            </div>
+        </div>
+
+        <div class="filter-right">
+    <div class="report-course-dropdown" id="reportCourseDropdown">
+        <button type="button" class="report-course-trigger" onclick="toggleReportCourseDropdown()">
+            <span>
+                {% if selected_course == "ALL" %}
+                    All Courses
+                {% elif selected_course == "MASTER OF COMPUTER APPLICATIONS" %}
+                    MCA
+                {% elif selected_course == "MASTER OF BUSINESS ADMINISTRATION" %}
+                    MBA
+                {% elif selected_course == "BACHELOR OF COMPUTER APPLICATIONS" %}
+                    BCA
+                {% else %}
+                    BBA
+                {% endif %}
+            </span>
+            <span>⌄</span>
+        </button>
+
+        <div class="report-course-menu" id="reportCourseMenu">
+            <a href="?course=ALL">All Courses</a>
+            <a href="?course=MASTER OF COMPUTER APPLICATIONS">MCA</a>
+            <a href="?course=MASTER OF BUSINESS ADMINISTRATION">MBA</a>
+            <a href="?course=BACHELOR OF COMPUTER APPLICATIONS">BCA</a>
+            <a href="?course=BACHELOR OF BUSINESS ADMINISTRATION">BBA</a>
+        </div>
+    </div>
+</div>
+    <!-- SUMMARY CARDS -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Students</h3>
+            <span class="stat-value">{{ report.total_students }}</span>
+        </div>
+
+        <div class="stat-card">
+            <h3>Passed</h3>
+            <span class="stat-value">{{ report.passed_students }}</span>
+        </div>
+
+        <div class="stat-card">
+            <h3>Failed</h3>
+            <span class="stat-value">{{ report.failed_students }}</span>
+        </div>
+
+        <div class="stat-card">
+            <h3>Average SGPA</h3>
+            <span class="stat-value">{{ report.avg_percentage }}</span>
+        </div>
+    </div>
+
+    <!-- TOPPER -->
+    {% if report.topper %}
+    <div class="action-card" style="margin-top:20px;">
+        <h3> Class Topper</h3>
+        <p><strong>{{ report.topper[0] }}</strong></p>
+        <p>SGPA: {{ report.topper[1] }}</p>
+    </div>
+    {% endif %}
+
+    <!-- RANKING TABLE -->
+    <div style="margin-top:30px; background:#fff; padding:20px; border-radius:16px; box-shadow:0 8px 20px rgba(0,0,0,0.08);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2> Student Rankings (By SGPA)</h2>
+
+            <a href="{{ url_for('admin.export_reports') }}" class="action-card" style="padding:10px 18px; text-decoration:none;">
+                Export CSV
+            </a>
+        </div>
+
+        <table style="width:100%; border-collapse:collapse;">
+            <thead>
+                <tr style="background:#f8fafc;">
+                    <th style="padding:14px; text-align:left;">Rank</th>
+                    <th style="padding:14px; text-align:left;">Enrollment No</th>
+                    <th style="padding:14px; text-align:left;">SGPA</th>
+                    <th style="padding:14px; text-align:left;">Performance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in report.rankings %}
+                <tr style="border-bottom:1px solid #e5e7eb;">
+                    <td style="padding:14px;">{{ loop.index }}</td>
+                    <td style="padding:14px;">{{ row[0] }}</td>
+                    <td style="padding:14px;">{{ row[1] }}</td>
+                    <td style="padding:14px;">
+                        {% if row[1] >= 9 %}
+                            Excellent
+                        {% elif row[1] >= 8 %}
+                            Very Good
+                        {% elif row[1] >= 7 %}
+                            Good
+                        {% elif row[1] >= 6 %}
+                            Average
+                        {% else %}
+                            Needs Improvement
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+function toggleReportCourseDropdown() {
+    document.getElementById("reportCourseMenu").classList.toggle("show");
+}
+
+document.addEventListener("click", function(e) {
+    const dropdown = document.getElementById("reportCourseDropdown");
+    if (!dropdown.contains(e.target)) {
+        document.getElementById("reportCourseMenu").classList.remove("show");
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="auth-layout" style="min-height:100vh; background:linear-gradient(135deg,#f8fafc,#eef2ff);">
+    
+    <!-- LEFT EXPERIENCE PANEL -->
+    <div class="auth-brand" style="position:relative; overflow:hidden; background:linear-gradient(145deg,#0f172a,#1e1b4b 60%,#312e81);">
+        <div style="position:absolute; top:-60px; right:-60px; width:220px; height:220px; border-radius:50%; background:rgba(255,255,255,0.06);"></div>
+        <div style="position:absolute; bottom:-80px; left:-80px; width:260px; height:260px; border-radius:50%; background:rgba(99,102,241,0.12);"></div>
+
+        <div class="brand-content" style="position:relative; z-index:2;">
+            <p style="font-size:12px; letter-spacing:0.08em; text-transform:uppercase; font-weight:700; color:#a5b4fc; margin-bottom:14px;">University ERP Analytics</p>
+            <h1 style="font-size:46px; line-height:1.08; margin-bottom:18px;">Result Intelligence<br> & Student Performance Suite</h1>
+            <p style="font-size:15px; line-height:1.8; max-width:500px;">
+                A Academic intelligence platform for secure result publishing,
+                SGPA tracking, student dashboards, and institution-wide performance reporting.
+            </p>
+
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:30px;">
+                <div style="padding:16px; border:1px solid rgba(255,255,255,0.08); border-radius:16px; background:rgba(255,255,255,0.04);">
+                    <strong style="display:block; font-size:22px; color:white;">SGPA</strong>
+                    <span style="font-size:12px; color:#cbd5e1;">Smart analytics</span>
+                </div>
+                <div style="padding:16px; border:1px solid rgba(255,255,255,0.08); border-radius:16px; background:rgba(255,255,255,0.04);">
+                    <strong style="display:block; font-size:22px; color:white;">CSV</strong>
+                    <span style="font-size:12px; color:#cbd5e1;">Fast uploads</span>
+                </div>
+                <div style="padding:16px; border:1px solid rgba(255,255,255,0.08); border-radius:16px; background:rgba(255,255,255,0.04);">
+                    <strong style="display:block; font-size:22px; color:white;">Role</strong>
+                    <span style="font-size:12px; color:#cbd5e1;">Secure access</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT LOGIN PANEL -->
+    <div class="auth-form" style="background:transparent;">
+        <div class="form-card" style="width:420px; border:none; box-shadow:0 24px 60px rgba(15,23,42,0.10);">
+            <p style="font-size:12px; text-transform:uppercase; letter-spacing:0.08em; font-weight:700; color:#6366f1; margin-bottom:8px;">Welcome Back</p>
+            <h2 style="font-size:34px; margin-bottom:8px;">Sign In</h2>
+            <p class="form-subtitle" style="font-size:15px; margin-bottom:28px;">Access your academic workspace securely</p>
+
+            {% if error %}
+            <div class="form-error">{{ error }}</div>
+            {% endif %}
+
+            <form method="post">
+                <div class="field">
+                    <input type="text" name="username" required>
+                    <label>Enrollment / Username</label>
+                </div>
+
+                <div class="field">
+                    <input type="password" name="password" required>
+                    <label>Password</label>
+                </div>
+
+                <button type="submit" class="btn-login" style="margin-top:8px;">
+                    Enter Dashboard
+                </button>
+            </form>
+
+            <div class="form-footer" style="margin-top:26px; font-size:13px;">
+                Protected by secure academic role-based authentication
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="dashboard-container">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header" style="margin-bottom: 30px;">
+        <h1 style="font-size: 36px; margin-bottom: 8px;"> Upload Results</h1>
+        <p style="color: #6b7280; font-size: 16px;">
+            Upload the latest official result CSV file
+        </p>
+    </div>
+
+    <!-- UPLOAD CARD -->
+    <div class="card upload-box" style="
+        max-width: 750px;
+        padding: 35px;
+        border-radius: 18px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+        background: white;
+    ">
+
+        {% if message %}
+            <div style="
+                background: #ecfdf5;
+                color: #065f46;
+                padding: 14px 18px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                font-weight: 600;
+            ">
+                ✅ {{ message }}
+            </div>
+        {% endif %}
+
+        {% if error %}
+            <div style="
+                background: #fef2f2;
+                color: #b91c1c;
+                padding: 14px 18px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                font-weight: 600;
+            ">
+                ❌ {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+
+            <!-- FILE PICKER -->
+            <div style="
+                border: 2px dashed #c7d2fe;
+                border-radius: 16px;
+                padding: 35px;
+                text-align: center;
+                background: #f8fafc;
+                margin-bottom: 25px;
+            ">
+                <p style="font-size: 16px; color: #475569; margin-bottom: 15px;">
+                    Drag & drop your <strong>results.csv</strong> file here  
+                    or click below to browse
+                </p>
+
+                <input type="file" name="result_file" required style="
+                    padding: 12px;
+                    border: 1px solid #d1d5db;
+                    border-radius: 10px;
+                    width: 100%;
+                    background: white;
+                ">
+            </div>
+
+            <!-- AUTO DETECT INFO -->
+            <div style="
+                background: #eff6ff;
+                color: #1d4ed8;
+                padding: 14px 18px;
+                border-radius: 10px;
+                margin-bottom: 25px;
+                font-size: 14px;
+            ">
+                ℹ️ The system will automatically detect:
+                <strong>semester, course, batch, and declared date</strong>
+                directly from the CSV file.
+            </div>
+
+            <!-- BUTTON -->
+            <button type="submit" class="btn-primary" style="
+                width: 100%;
+                padding: 14px;
+                font-size: 16px;
+                font-weight: 600;
+                border-radius: 12px;
+                background: linear-gradient(90deg, #4f46e5, #6366f1);
+                color: white;
+                border: none;
+                cursor: pointer;
+                box-shadow: 0 6px 18px rgba(79,70,229,0.25);
+            ">
+                Upload Results CSV
+            </button>
+
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

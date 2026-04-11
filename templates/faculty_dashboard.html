@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="dashboard-container">
+
+    <div class="page-header">
+        <h1>Faculty Dashboard</h1>
+        <p>Subject-wise academic performance analytics</p>
+    </div>
+
+    {% if error %}
+        <p style="color:red">{{ error }}</p>
+    {% endif %}
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h4>Program</h4>
+            <p>{{ faculty_info[0] }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h4>Subject</h4>
+            <p>{{ faculty_info[3] }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h4>Average</h4>
+            <p>{{ avg_marks }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h4>Pass %</h4>
+            <p>
+                {{ ((passed / total_results) * 100) | round(2) if total_results > 0 else 0 }}%
+            </p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3> Subject Topper</h3>
+        {% if topper %}
+            <p>{{ topper[0] }} → {{ topper[1] }}</p>
+        {% endif %}
+    </div>
+     <div class="card" style="margin-top:20px;">
+    <h3> Student Marks Ledger</h3>
+    <p style="color:#64748b; margin-bottom:16px;">
+        All students enrolled in {{ faculty_info[0] }} for {{ faculty_info[3] }}
+    </p>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Enrollment No</th>
+                <th>Total Marks</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in marks %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ row[0] }}</td>
+                <td>
+                    {% if row[1] < 40 %}
+                        <strong style="color:#dc2626;">{{ row[1] }}</strong>
+                    {% else %}
+                        <strong>{{ row[1] }}</strong>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if row[1] >= 40 %}
+                        <span style="color:green;">Pass</span>
+                    {% else %}
+                        <span style="color:red;">Fail</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+    <div class="card">
+        <h3> Weak Students</h3>
+        {% for s in weak_students %}
+            <p>{{ s[0] }} → {{ s[1] }}</p>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,5 @@
+Flask
+Werkzeug
+Pandas
+Openpyxl
+SQLite (built-in)

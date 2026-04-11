@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="dashboard-container" style="display:flex; flex-direction:column; gap:32px;">
+
+    <!-- HERO SECTION -->
+    <section style="display:grid; grid-template-columns:1.8fr 1fr; gap:24px;">
+        <div class="card" style="padding:36px; background:linear-gradient(135deg,#ffffff,#eef2ff 55%,#f8fafc); border:none; overflow:hidden; position:relative;">
+            <div style="position:absolute; right:-40px; top:-40px; width:180px; height:180px; background:rgba(215, 130, 11, 0.08); border-radius:50%;"></div>
+            <p style="margin:0 0 10px; font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#6366f1;">Academic Administration</p>
+            <h1 style="margin:0; font-size:42px; line-height:1.08; max-width:680px;">Educational Data Hub</h1>
+            <p style="margin:16px 0 0; max-width:720px; color:#64748b; line-height:1.8; font-size:15px;">
+                A modern command workspace to manage result uploads, student access, SGPA reports,
+                and institutional academic analytics through a clean centralized interface.
+            </p>
+
+            <div style="display:flex; gap:14px; flex-wrap:wrap; margin-top:28px;">
+                <a href="/admin/upload" class="btn-primary" style="text-decoration:none; padding:13px 20px;">Upload Results</a>
+                <a href="{{ url_for('admin.view_reports') }}" class="btn-primary" style="text-decoration:none; padding:13px 20px; background:#6059e0;">Performance Reports</a>
+            </div>
+        </div>
+
+        <div style="display:grid; gap:18px;">
+            <div class="card" style="padding:24px; background:linear-gradient(135deg,#4f46e5,#6366f1); color:white; border:none;">
+                <p style="margin:0; opacity:0.85; font-size:13px;">Primary Focus</p>
+                <h3 style="margin:10px 0 6px; font-size:24px; color:white;">Result Operations</h3>
+                <p style="margin:0; opacity:0.9; line-height:1.6;">Fast semester uploads with overwrite-safe processing and accurate declaration dates.</p>
+            </div>
+
+            <div class="card" style="padding:24px; border:none; background:#ffffff;">
+                <p style="margin:0; color:#64748b; font-size:13px;">Analytics</p>
+                <h3 style="margin:10px 0 6px; font-size:24px;">SGPA Rankings</h3>
+                <p style="margin:0; color:#64748b; line-height:1.6;">Instant topper detection, fail analysis, and export-ready academic reporting.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- KPI STRIP -->
+    <section>
+        <div class="stats-grid" style="grid-template-columns:repeat(4,minmax(0,1fr)); gap:22px;">
+            <div class="stat-card" style="padding:26px;">
+                <p style="margin:0; color:#64748b; font-size:13px;">Students</p>
+                <div class="stat-value" style="margin-top:10px;">1200</div>
+            </div>
+            <div class="stat-card" style="padding:26px;">
+                <p style="margin:0; color:#64748b; font-size:13px;">Faculty</p>
+                <div class="stat-value" style="margin-top:10px;">85</div>
+            </div>
+            <div class="stat-card" style="padding:26px;">
+                <p style="margin:0; color:#64748b; font-size:13px;">Departments</p>
+                <div class="stat-value" style="margin-top:10px;">6</div>
+            </div>
+            <div class="stat-card" style="padding:26px;">
+                <p style="margin:0; color:#64748b; font-size:13px;">Reports</p>
+                <div class="stat-value" style="margin-top:10px;">32</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURE MODULES -->
+    <section>
+        <div style="margin-bottom:18px;">
+            <h2 style="margin:0; font-size:26px;">Core Administrative Modules</h2>
+            <p style="margin:6px 0 0; color:#64748b;">Organized tools for result administration</p>
+        </div>
+
+        <div class="action-grid" style="grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px;">
+            <a href="/admin/upload" class="action-card" style="padding:28px; text-decoration:none;">
+                <h3> Smart Result Upload</h3>
+                <p>Upload semester CSVs with automatic duplicate replacement, backlog updates, and subject-wise declared date tracking.</p>
+            </a>
+
+            <a href="/admin/users" class="action-card" style="padding:28px; text-decoration:none;">
+                <h3> User Administration</h3>
+                <p>Professionally manage students, faculty, and secure role-based academic access from one place.</p>
+            </a>
+
+            <a href="{{ url_for('admin.view_reports') }}" class="action-card" style="padding:28px; text-decoration:none;">
+                <h3> Advanced Performance Reports</h3>
+                <p>Open SGPA-based rankings, topper analysis, and batch-wide academic insights with export support.</p>
+            </a>
+
+             <a href="{{ url_for('admin.academic_overview') }}" class="action-card">
+    <h3> Academic Overview</h3>
+                <p>Explore overall result trends,  Semester Performance Trend, and Students Needing Attention.</p>
+            </a>
+        </div>
+    </section>
+
+</div>
+
+{% endblock %}

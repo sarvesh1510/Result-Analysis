@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="dashboard" style="display:flex; flex-direction:column; gap:28px;">
+
+    <!-- HERO OVERVIEW -->
+    <section style="display:grid; grid-template-columns:1.7fr 1fr; gap:24px;">
+        <div class="card" style="padding:32px; background:linear-gradient(135deg,#ffffff,#eef2ff 55%,#f8fafc); border:none; position:relative; overflow:hidden;">
+            <div style="position:absolute; right:-40px; top:-40px; width:180px; height:180px; border-radius:50%; background:rgba(99,102,241,0.08);"></div>
+            <p style="margin:0 0 10px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#6366f1;">Student Analytics</p>
+            <h1 style="margin:0; font-size:40px; line-height:1.08;">Academic Performance Dashboard</h1>
+            <p style="margin-top:14px; max-width:700px; color:#64748b; line-height:1.8;">
+                A personalized academic workspace with SGPA insights, subject-wise result declarations,
+                marks analytics, and progress trends across your semester.
+            </p>
+        </div>
+
+        <div class="card" style="padding:28px; border:none;">
+            <h3 style="margin-top:0;">Student Profile</h3>
+            <div style="display:flex; flex-direction:column; gap:10px; color:#475569; line-height:1.7; margin-top:14px;">
+                <div><strong>Enrollment:</strong> {{ student[0] }}</div>
+                <div><strong>Name:</strong> {{ student[1] }}</div>
+                <div><strong>Program:</strong> {{ student[2] }}</div>
+                <div><strong>Batch:</strong> {{ student[3] }}</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- KPI STRIP -->
+    <section class="stats-grid" style="grid-template-columns:repeat(3,minmax(0,1fr)); gap:22px;">
+        <div class="stat-card" style="padding:26px;">
+            <p style="margin:0; color:#64748b; font-size:13px;">SGPA</p>
+            <div class="stat-value" style="margin-top:10px;">{{ sgpa }}</div>
+        </div>
+        <div class="stat-card" style="padding:26px;">
+            <p style="margin:0; color:#64748b; font-size:13px;">Percentage</p>
+            <div class="stat-value" style="margin-top:10px;">{{ percentage }}%</div>
+        </div>
+        <div class="stat-card" style="padding:26px;">
+            <p style="margin:0; color:#64748b; font-size:13px;">Subjects</p>
+            <div class="stat-value" style="margin-top:10px;">{{ subjects }}</div>
+        </div>
+    </section>
+
+    <!-- CHARTS -->
+    <section style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+        <div class="card" style="padding:24px;">
+            <h3 style="margin-top:0;"> Total Marks Performance</h3>
+            <canvas id="marksChart"></canvas>
+        </div>
+
+        <div class="card" style="padding:24px;">
+            <h3 style="margin-top:0;"> Internal vs External</h3>
+            <canvas id="compareChart"></canvas>
+        </div>
+    </section>
+
+
+    <!-- RESULT TABLE -->
+    <section class="card full-table" style="padding:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+            <div>
+                <h3 style="margin:0;"> Subject-wise Result Ledger</h3>
+                <p style="margin:6px 0 0; color:#64748b;">Latest declared result date shown for every subject</p>
+            </div>
+        </div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Semester</th>
+                    <th>Paper Code</th>
+                    <th>Subject</th>
+                    <th>Internal</th>
+                    <th>External</th>
+                    <th>Total</th>
+                    <th>Declared On</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in results %}
+                <tr>
+                    <td>{{ r[0] }}</td>
+                    <td>{{ r[1] }}</td>
+                    <td>{{ r[2] }}</td>
+                    <td>{{ r[3] if r[3] is not none else '-' }}</td>
+                    <td>{{ r[4] }}</td>
+                    <td>
+                        {% if r[5] < 40 %}
+                            <strong style="color:#dc2626;">{{ r[5] }}</strong>
+                        {% else %}
+                            <strong>{{ r[5] }}</strong>
+                        {% endif %}
+                    </td>
+                    <td>{{ r[6] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+</div>
+
+<!-- INSIGHT STRIP -->
+    <section class="stats-grid" style="grid-template-columns:repeat(3,minmax(0,1fr)); gap:22px;">
+        <div class="stat-card">
+            <h4>🏆 Top Subject</h4>
+            <p>{{ highest[0] }}</p>
+            <strong>{{ highest[1] }} Marks</strong>
+        </div>
+
+        <div class="stat-card">
+            <h4>📌 Needs Improvement</h4>
+            <p>{{ lowest[0] }}</p>
+            <strong>{{ lowest[1] }} Marks</strong>
+        </div>
+
+        <div class="stat-card">
+            <h4>📍 Status</h4>
+            {% if passed %}
+            <span style="color:green; font-weight:600;">Passed All Subjects</span>
+            {% else %}
+            <span style="color:red; font-weight:600;">Reappear Required</span>
+            {% endif %}
+        </div>
+    </section>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script id="dashboard-data" type="application/json">
+{
+    "subjects": {{ results | map(attribute=1) | list | tojson }},
+    "subject_names": {{ results | map(attribute=2) | list | tojson }},
+    "totals": {{ results | map(attribute=5) | list | tojson }},
+    "internal": {{ results | map(attribute=3) | list | tojson }},
+    "external": {{ results | map(attribute=4) | list | tojson }}
+}
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+    const data = JSON.parse(document.getElementById("dashboard-data").textContent);
+
+    const subjects = data.subjects;
+    const subjectNames = data.subject_names;
+    const totals = data.totals;
+    const internal = data.internal;
+    const external = data.external;
+
+    if (Chart.getChart("marksChart")) Chart.getChart("marksChart").destroy();
+    if (Chart.getChart("compareChart")) Chart.getChart("compareChart").destroy();
+
+    new Chart(document.getElementById("marksChart"), {
+    type: "bar",
+    data: {
+        labels: subjects,
+        datasets: [{
+            label: "Marks",
+            data: totals,
+            backgroundColor: "#6366f1"
+        }]
+    },
+    options: {
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    afterLabel: function(context) {
+                        return subjectNames[context.dataIndex];
+                    }
+                }
+            }
+        }
+    }
+});
+
+    new Chart(document.getElementById("compareChart"), {
+        type: "bar",
+        data: {
+            labels: subjects,
+            datasets: [
+                {
+                    label: "Internal",
+                    data: internal,
+                    backgroundColor: "#22c55e"
+                },
+                {
+                    label: "External",
+                    data: external,
+                    backgroundColor: "#6366f1"
+                }
+            ]
+        }
+    });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title if title else "Result Analysis & Performance Dashboard" }}</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    {% if request.endpoint != 'auth.login' %}
+    <header class="top-header">
+
+    <div class="header-left">
+        Academic Analytics Portal
+    </div>
+
+    <div class="header-right">
+
+        <div class="profile-menu">
+
+            <button class="profile-btn">
+                {{ session.get("role")|capitalize }}
+                <span class="arrow">▼</span>
+            </button>
+
+            <div class="dropdown-menu">
+            <a href="/dashboard">Dashboard</a>   
+            <a href="/account-settings">Account Settings</a>
+            <a href="/change-password">Change Password</a>
+
+
+                <hr>
+
+                <a href="/logout" class="logout-item">Logout</a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+    {% endif %}
+
+    <!-- PAGE CONTENT -->
+    <main class="main-content fade-in">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+
+const profileBtn = document.querySelector(".profile-btn");
+const dropdown = document.querySelector(".dropdown-menu");
+
+profileBtn.addEventListener("click", function(){
+
+dropdown.style.display =
+dropdown.style.display === "flex" ? "none" : "flex";
+
+});
+
+window.addEventListener("click", function(e){
+
+if(!profileBtn.contains(e.target) && !dropdown.contains(e.target)){
+dropdown.style.display = "none";
+}
+
+});
+
+</script>
+</body>
+</html>

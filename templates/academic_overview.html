@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="dashboard-container" style="display:flex; flex-direction:column; gap:28px;">
+
+    <!-- HERO -->
+    <section class="card" style="padding:32px; background:linear-gradient(135deg,#ffffff,#eef2ff 55%,#f8fafc); border:none;">
+        <p style="margin:0 0 10px; font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#6366f1;">Academic Intelligence</p>
+        <h1 style="margin:0; font-size:40px;">Academic Overview</h1>
+        <p style="margin-top:14px; max-width:760px; color:#64748b; line-height:1.8;">
+            Institution-wide academic analytics with semester trends, pass percentage, difficult subjects,
+            top performers, and students needing academic intervention.
+        </p>
+    </section>
+
+    <div class="premium-filter-card">
+    <div class="premium-filter-form">
+        <div class="filter-left">
+            <div class="filter-title-group">
+                <h3>Filter by Course</h3>
+            </div>
+        </div>
+
+        <div class="filter-right">
+            <div class="overview-course-dropdown" id="overviewCourseDropdown">
+                <button type="button" class="overview-course-trigger" onclick="toggleOverviewCourseDropdown()">
+                    <span>
+                        {% if selected_course == "ALL" %}
+                            All Courses
+                        {% elif selected_course == "MASTER OF COMPUTER APPLICATIONS" %}
+                            MCA
+                        {% elif selected_course == "MASTER OF BUSINESS ADMINISTRATION" %}
+                            MBA
+                        {% elif selected_course == "BACHELOR OF COMPUTER APPLICATIONS" %}
+                            BCA
+                        {% else %}
+                            BBA
+                        {% endif %}
+                    </span>
+                    <span>⌄</span>
+                </button>
+
+                <div class="overview-course-menu" id="overviewCourseMenu">
+                    <a href="?course=ALL">All Courses</a>
+                    <a href="?course=MASTER OF COMPUTER APPLICATIONS">MCA</a>
+                    <a href="?course=MASTER OF BUSINESS ADMINISTRATION">MBA</a>
+                    <a href="?course=BACHELOR OF COMPUTER APPLICATIONS">BCA</a>
+                    <a href="?course=BACHELOR OF BUSINESS ADMINISTRATION">BBA</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <!-- KPI ROW -->
+    <section class="stats-grid" style="grid-template-columns:repeat(4,minmax(0,1fr)); gap:20px;">
+        <div class="stat-card">
+            <p style="margin:0; color:#64748b; font-size:13px;">Average SGPA</p>
+            <div class="stat-value">{{ overview.avg_sgpa }}</div>
+        </div>
+        <div class="stat-card">
+            <p style="margin:0; color:#64748b; font-size:13px;">Pass Percentage</p>
+            <div class="stat-value">{{ overview.pass_percentage }}%</div>
+        </div>
+        <div class="stat-card">
+            <p style="margin:0; color:#64748b; font-size:13px;">Failed Subjects</p>
+            <div class="stat-value">{{ overview.failed_subjects }}</div>
+        </div>
+        <div class="stat-card">
+            <p style="margin:0; color:#64748b; font-size:13px;">At-Risk Students</p>
+            <div class="stat-value">{{ overview.at_risk_count }}</div>
+        </div>
+    </section>
+    
+
+    <!-- ANALYTICS GRID -->
+    <section style="display:grid; grid-template-columns:1.3fr 1fr; gap:24px;">
+        <div class="card" style="padding:24px;">
+            <h3 style="margin-top:0;"> Semester Performance Trend</h3>
+            <canvas id="semesterTrendChart"></canvas>
+        </div>
+
+        <div class="card" style="padding:24px;">
+            <h3 style="margin-top:0;"> Most Difficult Subjects</h3>
+            <table class="data-table" style="margin-top:14px;">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Average</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in overview.difficult_subjects %}
+                    <tr>
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[1] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- BOTTOM GRID -->
+    <section style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+        <div class="card" style="padding:24px;">
+            <h3 style="margin-top:0;"> Top 5 Performers</h3>
+            {% for student in overview.top_performers %}
+            <div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #e2e8f0;">
+                <span>{{ student[0] }}</span>
+                <strong>{{ student[1] }}</strong>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="card" style="padding:24px;">
+            <h3 style="margin-top:0;"> Students Needing Attention</h3>
+            {% for student in overview.at_risk_students %}
+            <div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #e2e8f0;">
+                <span>{{ student[0] }}</span>
+                <strong style="color:#dc2626;">{{ student[1] }}</strong>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script id="overview-data" type="application/json">
+{
+    "semester_labels": {{ overview.semester_labels | tojson }},
+    "semester_values": {{ overview.semester_values | tojson }}
+}
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const data = JSON.parse(
+        document.getElementById("overview-data").textContent
+    );
+
+    const semesterLabels = data.semester_labels;
+    const semesterValues = data.semester_values;
+
+    const canvas = document.getElementById("semesterTrendChart");
+
+    if (canvas) {
+        new Chart(canvas, {
+            type: "line",
+            data: {
+                labels: semesterLabels,
+                datasets: [{
+                    label: "Average SGPA",
+                    data: semesterValues,
+                    borderColor: "#6366f1",
+                    backgroundColor: "rgba(99,102,241,0.1)",
+                    tension: 0.35,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+
+<script>
+function toggleOverviewCourseDropdown() {
+    document.getElementById("overviewCourseMenu").classList.toggle("show");
+}
+
+document.addEventListener("click", function(e) {
+    const dropdown = document.getElementById("overviewCourseDropdown");
+    if (!dropdown.contains(e.target)) {
+        document.getElementById("overviewCourseMenu").classList.remove("show");
+    }
+});
+</script>
+
+{% endblock %}
