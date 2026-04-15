@@ -4,7 +4,6 @@ from routes.auth_routes import auth_bp
 from routes.admin_routes import admin_bp
 from routes.faculty_routes import faculty_bp
 from routes.student_routes import student_bp
-import os
 
 app = Flask(__name__)
 app.secret_key = "result_analysis_secret_key"
@@ -24,6 +23,4 @@ def home():
     return redirect(url_for("auth.login"))
 
 if __name__ == "__main__":
-    # Use Render's PORT environment variable, default to 5000
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(debug=True)
