@@ -19,10 +19,16 @@ app.register_blueprint(admin_bp)
 app.register_blueprint(faculty_bp)
 app.register_blueprint(student_bp)
 
+# Root route - still redirects to login
 @app.route("/")
 def home():
-    # Always open login page first
     return redirect(url_for("auth.login"))
 
+# Health check route for Render
+@app.route("/health")
+def health():
+    return "OK", 200
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Production mode, disable debug
+    app.run(debug=False)
